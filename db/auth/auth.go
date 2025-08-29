@@ -25,7 +25,7 @@ func (a *Db) CreateTables() error {
 			is_admin BOOLEAN NOT NULL DEFAULT FALSE
 		);
 
-		CREATE UNIQUE INDEX IF NOT EXISTS ON users(did);
+		CREATE UNIQUE INDEX IF NOT EXISTS user_did ON users(did);
 	`)
 	return err
 }

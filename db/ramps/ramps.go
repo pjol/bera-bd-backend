@@ -24,7 +24,8 @@ func (a *Db) CreateTables() error {
 			name TEXT NOT NULL,
 			url TEXT NOT NULL,
 			email TEXT NOT NULL,
-			approval boolean NOT NULL DEFAULT false
+			approval boolean NOT NULL DEFAULT false,
+			archived boolean NOT NULL DEFAULT false
 		);
 	`)
 	if err != nil {
@@ -34,7 +35,8 @@ func (a *Db) CreateTables() error {
 	_, err = a.db.Exec(context.Background(), `
 		CREATE TABLE IF NOT EXISTS regions(
 			id SERIAL PRIMARY KEY,
-			name TEXT NOT NULL
+			name TEXT NOT NULL,
+			UNIQUE(name)
 		);
 	`)
 	if err != nil {
@@ -45,7 +47,8 @@ func (a *Db) CreateTables() error {
 		CREATE TABLE IF NOT EXISTS ramp_regions(
 			id SERIAL PRIMARY KEY,
 			ramp INTEGER NOT NULL REFERENCES ramps(id),
-			region INTEGER NOT NULL REFERENCES regions(id)
+			region INTEGER NOT NULL REFERENCES regions(id),
+			UNIQUE(ramp, region)
 		);
 	`)
 	if err != nil {
@@ -56,7 +59,8 @@ func (a *Db) CreateTables() error {
 		CREATE TABLE IF NOT EXISTS assets(
 			id SERIAL PRIMARY KEY,
 			ticker TEXT NOT NULL,
-			address TEXT NOT NULL
+			address TEXT NOT NULL,
+			UNIQUE(address)
 		);
 	`)
 	if err != nil {
@@ -64,10 +68,11 @@ func (a *Db) CreateTables() error {
 	}
 
 	_, err = a.db.Exec(context.Background(), `
-		CREATE TABLE IF NOT EXITST ramp_assets(
+		CREATE TABLE IF NOT EXISTS ramp_assets(
 			id SERIAL PRIMARY KEY,
 			ramp INTEGER NOT NULL REFERENCES ramps(id),
-			asset INTEGER NOT NULL REFERENCES assets(id)
+			asset INTEGER NOT NULL REFERENCES assets(id),
+			UNIQUE(ramp, asset)
 		);
 	`)
 	if err != nil {
@@ -77,7 +82,8 @@ func (a *Db) CreateTables() error {
 	_, err = a.db.Exec(context.Background(), `
 		CREATE TABLE IF NOT EXISTS payment_methods(
 			id SERIAL PRIMARY KEY,
-			name TEXT NOT NULL
+			name TEXT NOT NULL,
+			UNIQUE(name)
 		);
 	`)
 	if err != nil {
@@ -88,7 +94,8 @@ func (a *Db) CreateTables() error {
 		CREATE TABLE IF NOT EXISTS ramp_payment_methods(
 			id SERIAL PRIMARY KEY,
 			ramp INTEGER NOT NULL REFERENCES ramps(id),
-			payment_method INTEGER NOT NULL REFERENCES payment_methods(id)
+			payment_method INTEGER NOT NULL REFERENCES payment_methods(id),
+			UNIQUE(ramp, payment_method)
 		);
 	`)
 	if err != nil {
